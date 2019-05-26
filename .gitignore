@@ -1,0 +1,4 @@
+*.bak 
+*.output
+*.out
+cmake-build-debug
