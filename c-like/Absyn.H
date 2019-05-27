@@ -47,6 +47,7 @@ class SJmpReturn;
 class EAssign;
 class EMul;
 class EDiv;
+class EMod;
 class EAdd;
 class ESub;
 class EFuncParam;
@@ -94,6 +95,7 @@ public:
   virtual llvm::Value *visitEAssign(EAssign *p) = 0;
   virtual llvm::Value *visitEMul(EMul *p) = 0;
   virtual llvm::Value *visitEDiv(EDiv *p) = 0;
+  virtual llvm::Value *visitEMod(EMod *p) = 0;
   virtual llvm::Value *visitEAdd(EAdd *p) = 0;
   virtual llvm::Value *visitESub(ESub *p) = 0;
   virtual llvm::Value *visitEFuncParam(EFuncParam *p) = 0;
@@ -450,6 +452,21 @@ public:
   virtual void accept(Visitor *v);
   virtual EDiv *clone() const;
   void swap(EDiv &);
+};
+
+class EMod : public Exp
+{
+public:
+    Exp *exp_1;
+    Exp *exp_2;
+
+    EMod(const EMod &);
+    EMod &operator=(const EMod &);
+    EMod(Exp *p1, Exp *p2);
+    ~EMod();
+    virtual void accept(Visitor *v);
+    virtual EMod *clone() const;
+    void swap(EMod &);
 };
 
 class EAdd : public Exp

@@ -868,6 +868,51 @@ EDiv *EDiv::clone() const
   return new EDiv(*this);
 }
 
+/********************   EMod    ********************/
+EMod::EMod(Exp *p1, Exp *p2)
+{
+    exp_1 = p1;
+    exp_2 = p2;
+
+}
+
+EMod::EMod(const EMod & other)
+{
+    exp_1 = other.exp_1->clone();
+    exp_2 = other.exp_2->clone();
+
+}
+
+EMod &EMod::operator=(const EMod & other)
+{
+    EMod tmp(other);
+    swap(tmp);
+    return *this;
+}
+
+void EMod::swap(EMod & other)
+{
+    std::swap(exp_1, other.exp_1);
+    std::swap(exp_2, other.exp_2);
+
+}
+
+EMod::~EMod()
+{
+    delete(exp_1);
+    delete(exp_2);
+
+}
+
+void EMod::accept(Visitor *v)
+{
+    v->visitEMod(this);
+}
+
+EMod *EMod::clone() const
+{
+    return new EMod(*this);
+}
 
 
 /********************   EAdd    ********************/

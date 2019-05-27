@@ -404,6 +404,20 @@ llvm::Value *PrintAbsyn::visitEDiv(EDiv* p)
   _i_ = oldi;
 }
 
+llvm::Value *PrintAbsyn::visitEMod(EMod* p)
+{
+    int oldi = _i_;
+    if (oldi > 1) render(_L_PAREN);
+
+    _i_ = 1; p->exp_1->accept(this);
+    render('%');
+    _i_ = 2; p->exp_2->accept(this);
+
+    if (oldi > 1) render(_R_PAREN);
+
+    _i_ = oldi;
+}
+
 llvm::Value *PrintAbsyn::visitEAdd(EAdd* p)
 {
   int oldi = _i_;
@@ -825,6 +839,16 @@ llvm::Value *ShowAbsyn::visitEDiv(EDiv* p)
   bufAppend(' ');
   p->exp_2->accept(this);
   bufAppend(')');
+}
+llvm::Value *ShowAbsyn::visitEMod(EMod* p)
+{
+    bufAppend('(');
+    bufAppend("EMod");
+    bufAppend(' ');
+    p->exp_1->accept(this);
+    bufAppend(' ');
+    p->exp_2->accept(this);
+    bufAppend(')');
 }
 llvm::Value *ShowAbsyn::visitEAdd(EAdd* p)
 {

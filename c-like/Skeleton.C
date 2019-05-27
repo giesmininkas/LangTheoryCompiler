@@ -107,8 +107,6 @@ llvm::Value *Skeleton::visitFunc(Func *func) {
         value_stack.pop();
     }*/
 
-    Log(block);
-
     if(llvm::verifyFunction(*function, &llvm::errs())) {
         function->eraseFromParent();
         return nullptr;
@@ -153,7 +151,6 @@ llvm::Value *Skeleton::visitSIfElse(SIfElse *sifelse) {
 
 
     auto cond_value = builder.CreateICmpNE(cond, llvm::ConstantInt::get(cond->getType(), 0, true), "ifcond");
-    Log(cond_value);
 
     auto function = builder.GetInsertBlock()->getParent();
 
@@ -162,7 +159,6 @@ llvm::Value *Skeleton::visitSIfElse(SIfElse *sifelse) {
     auto merge = llvm::BasicBlock::Create(context, "ifcont");
 
     auto br = builder.CreateCondBr(cond_value, then, else_);
-    Log(br);
     builder.SetInsertPoint(then);
 
     sifelse->stmt_1->accept(this);
@@ -170,7 +166,6 @@ llvm::Value *Skeleton::visitSIfElse(SIfElse *sifelse) {
     if(!value_stack.empty()){
         then_value = value_stack.top();
         value_stack.pop();
-        Log(then_value);
     }
 
 
@@ -184,7 +179,6 @@ llvm::Value *Skeleton::visitSIfElse(SIfElse *sifelse) {
     if(!value_stack.empty()){
         else_value = value_stack.top();
         value_stack.pop();
-        Log(else_value);
     }
 
     builder.CreateBr(merge);
@@ -217,7 +211,6 @@ llvm::Value *Skeleton::visitSIf(SIf *sif) {
     if(!value_stack.empty()){
         then_value = value_stack.top();
         value_stack.pop();
-        Log(then_value);
     }
 
     builder.CreateBr(merge);
@@ -240,7 +233,6 @@ llvm::Value *Skeleton::visitSWhile(SWhile *swhile) {
     auto after = llvm::BasicBlock::Create(context, "afterloop", function);
 
     builder.CreateBr(header);
-    Log(preheader);
 
     builder.SetInsertPoint(header);
     swhile->exp_->accept(this);
@@ -252,7 +244,6 @@ llvm::Value *Skeleton::visitSWhile(SWhile *swhile) {
     builder.SetInsertPoint(loop_block);
     swhile->stmt_->accept(this);
     builder.CreateBr(header);
-    Log(loop_block);
 
     builder.SetInsertPoint(after);
 
@@ -282,8 +273,6 @@ llvm::Value *Skeleton::visitSDeclAss(SDeclAss *sdeclass) {
 
     auto assignment = builder.CreateStore(value, var);
 
-    Log(value);
-    Log(assignment);
     return assignment; //value_stack.top();
 }
 
@@ -332,7 +321,8 @@ llvm::Value *Skeleton::visitSJmpRetExp(SJmpRetExp *sjmpretexp) {
 
 llvm::Value *Skeleton::visitSJmpReturn(SJmpReturn *sjmpreturn) {
     /* Code For SJmpReturn Goes Here */
-    builder.CreateRet(llvm::Constant::getNullValue(llvm::Type::getVoidTy(context)));
+    //builder.CreateRet(llvm::Constant::getNullValue(llvm::Type::getVoidTy(context)));
+    builder.CreateRet(nullptr);
 }
 
 llvm::Value *Skeleton::visitEAssign(EAssign *eassign) {
@@ -382,6 +372,23 @@ llvm::Value *Skeleton::visitEDiv(EDiv *ediv) {
     value_stack.push(divvalue);
     return value_stack.top();
 }
+
+llvm::Value *Skeleton::visitEMod(EMod *emod) {
+    /* Code For EMod Goes Here */
+
+    emod->exp_1->accept(this);
+    emod->exp_2->accept(this);
+
+    llvm::Value *rhs = value_stack.top();
+    value_stack.pop();
+    llvm::Value *lhs = value_stack.top();
+    value_stack.pop();
+
+    llvm::Value *modvalue = builder.CreateSRem(lhs, rhs, "modtmp");
+    value_stack.push(modvalue);
+    return value_stack.top();
+}
+
 
 llvm::Value *Skeleton::visitEAdd(EAdd *eadd) {
     /* Code For EAdd Goes Here */
@@ -440,7 +447,10 @@ llvm::Value *Skeleton::visitEFuncParam(EFuncParam *efuncparam) {
     }
     std::reverse(value.begin(), value.end());
 
-    value_stack.push(builder.CreateCall(callee_func, value, "callfunc"));
+    if(callee_func->getReturnType() == builder.getVoidTy())
+        value_stack.push(builder.CreateCall(callee_func, value));
+    else value_stack.push(builder.CreateCall(callee_func, value, "callfunc"));
+
     return value_stack.top();
 }
 

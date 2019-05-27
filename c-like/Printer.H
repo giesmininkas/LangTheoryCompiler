@@ -57,6 +57,7 @@ void render(char* s);
   llvm::Value *visitEAssign(EAssign *p);
   llvm::Value *visitEMul(EMul *p);
   llvm::Value *visitEDiv(EDiv *p);
+  llvm::Value *visitEMod(EMod *p);
   llvm::Value *visitEAdd(EAdd *p);
   llvm::Value *visitESub(ESub *p);
   llvm::Value *visitEFuncParam(EFuncParam *p);
@@ -170,6 +171,7 @@ class ShowAbsyn : public Visitor
   llvm::Value *visitEAssign(EAssign *p);
   llvm::Value *visitEMul(EMul *p);
   llvm::Value *visitEDiv(EDiv *p);
+  llvm::Value *visitEMod(EMod *p);
   llvm::Value *visitEAdd(EAdd *p);
   llvm::Value *visitESub(ESub *p);
   llvm::Value *visitEFuncParam(EFuncParam *p);
