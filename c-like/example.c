@@ -5,16 +5,18 @@ int foo(int f) {
 
 
 int main() {
-    int n = 1235654;
+    int n = '0';
     //char c = 12;
     
     char abcd = 123;
+    
+    //putchar(abcd);
     
     if ( n ) {
         
     }
   
-    //while ( n ) {
+    while ( n - 90 ) {
         /*int abcd = 13456;
         char dfgh = 'a';
         dfgh = 'b';
@@ -26,10 +28,12 @@ int main() {
         
         } */
         
-      //  n = n - 1;
-        
-    //}
+        n = n + 1;
+        putchar(n);    
+    }
     
+    char c = 10;
+    putchar(c);
     return foo(abcd);
 }
 

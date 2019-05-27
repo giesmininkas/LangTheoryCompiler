@@ -43,6 +43,11 @@ llvm::Value *Skeleton::visitType(Type *p) {} //abstract class
 llvm::Value *Skeleton::visitProgr(Progr *p) {
     /* Code For Progr Goes Here */
 
+    std::vector<llvm::Type*> arg_types;
+    arg_types.push_back(builder.getInt32Ty());
+    llvm::FunctionType *putchar = llvm::FunctionType::get(builder.getInt32Ty(), arg_types, false);
+    llvm::Constant *func = module->getOrInsertFunction("putchar", putchar);
+
     p->listfunction_->accept(this);
 
 }
