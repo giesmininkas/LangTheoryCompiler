@@ -11,7 +11,6 @@ int fibonacci(int iter) {
         }
     }
     
-    
     return c;
 }
 
@@ -68,9 +67,5 @@ int main() {
     int fib = fibonacci(iter);
     
     print_integer(fib);
-    
-    //int a = 4;
-    //int b = foo(a);
-    //print_integer(b);
     return 0;
 }

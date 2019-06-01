@@ -32,15 +32,15 @@
 #include "llvm/Target/TargetOptions.h"
 
 
-llvm::Value *Skeleton::visitProgram(Program *p) {} //abstract class
-llvm::Value *Skeleton::visitFunction(Function *p) {} //abstract class
-llvm::Value *Skeleton::visitDeclaration(Declaration *p) {} //abstract class
-llvm::Value *Skeleton::visitStmt(Stmt *p) {} //abstract class
-llvm::Value *Skeleton::visitJmp(Jmp *p) {} //abstract class
-llvm::Value *Skeleton::visitExp(Exp *p) {} //abstract class
-llvm::Value *Skeleton::visitType(Type *p) {} //abstract class
+void Skeleton::visitProgram(Program *p) {} //abstract class
+void Skeleton::visitFunction(Function *p) {} //abstract class
+void Skeleton::visitDeclaration(Declaration *p) {} //abstract class
+void Skeleton::visitStmt(Stmt *p) {} //abstract class
+void Skeleton::visitJmp(Jmp *p) {} //abstract class
+void Skeleton::visitExp(Exp *p) {} //abstract class
+void Skeleton::visitType(Type *p) {} //abstract class
 
-llvm::Value *Skeleton::visitProgr(Progr *p) {
+void Skeleton::visitProgr(Progr *p) {
     /* Code For Progr Goes Here */
 
     std::vector<llvm::Type*> arg_types;
@@ -49,10 +49,9 @@ llvm::Value *Skeleton::visitProgr(Progr *p) {
     llvm::Constant *func = module->getOrInsertFunction("putchar", putchar);
 
     p->listfunction_->accept(this);
-
 }
 
-llvm::Value *Skeleton::visitFunc(Func *func) {
+void Skeleton::visitFunc(Func *func) {
     /* Code For Func Goes Here */
 
     func->type_->accept(this);
@@ -60,10 +59,8 @@ llvm::Value *Skeleton::visitFunc(Func *func) {
     auto return_type = type_stack.top();
     type_stack.pop();
 
-    //visitIdent(func->ident_);
     auto function_name = func->ident_;
 
-    //func->listdeclaration_->accept(this);
     std::vector<llvm::Type *> arg_types;
     for (auto declaration : *func->listdeclaration_) {
         auto decl = static_cast<Decl *>(declaration);
@@ -98,25 +95,11 @@ llvm::Value *Skeleton::visitFunc(Func *func) {
 
     func->stmt_->accept(this);
 
-    /*llvm::Value *return_value = builder.CreateAlloca(llvm::Type::getInt64Ty(context));
-    builder.CreateStore(llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), 0), return_value);
-    builder.CreateRet(return_value);*/
-
-    /*if (!value_stack.empty()) {
-        builder.CreateRet(value_stack.top());
-        value_stack.pop();
-    }*/
-
-    if(llvm::verifyFunction(*function, &llvm::errs())) {
+    if(llvm::verifyFunction(*function, &llvm::errs()))
         function->eraseFromParent();
-        return nullptr;
-    }
-
-    //value_stack.push(function);
-    return function;
 }
 
-llvm::Value *Skeleton::visitDecl(Decl *decl) {
+void Skeleton::visitDecl(Decl *decl) {
     /* Code For Decl Goes Here */
 
     decl->type_->accept(this);
@@ -128,27 +111,20 @@ llvm::Value *Skeleton::visitDecl(Decl *decl) {
     named_values.emplace(decl->ident_, var);
 
     value_stack.push(var);
-    return var;
 }
 
-llvm::Value *Skeleton::visitSComp(SComp *scomp) {
+void Skeleton::visitSComp(SComp *scomp) {
     /* Code For SComp Goes Here */
 
     scomp->liststmt_->accept(this);
-
 }
 
-llvm::Value *Skeleton::visitSIfElse(SIfElse *sifelse) {
+void Skeleton::visitSIfElse(SIfElse *sifelse) {
     /* Code For SIfElse Goes Here */
 
     sifelse->exp_->accept(this);
     auto cond = value_stack.top();
     value_stack.pop();
-
-    //cond = builder.CreateLoad(cond);
-    /*cond->print(llvm::errs());
-    llvm::errs() << "\n";*/
-
 
     auto cond_value = builder.CreateICmpNE(cond, llvm::ConstantInt::get(cond->getType(), 0, true), "ifcond");
 
@@ -168,7 +144,6 @@ llvm::Value *Skeleton::visitSIfElse(SIfElse *sifelse) {
         value_stack.pop();
     }
 
-
     builder.CreateBr(merge);
     then = builder.GetInsertBlock();
 
@@ -186,11 +161,9 @@ llvm::Value *Skeleton::visitSIfElse(SIfElse *sifelse) {
 
     function->getBasicBlockList().push_back(merge);
     builder.SetInsertPoint(merge);
-
-    return nullptr;
 }
 
-llvm::Value *Skeleton::visitSIf(SIf *sif) {
+void Skeleton::visitSIf(SIf *sif) {
     /* Code For SIf Goes Here */
 
     sif->exp_->accept(this);
@@ -218,11 +191,9 @@ llvm::Value *Skeleton::visitSIf(SIf *sif) {
 
     function->getBasicBlockList().push_back(merge);
     builder.SetInsertPoint(merge);
-
-    return nullptr;
 }
 
-llvm::Value *Skeleton::visitSWhile(SWhile *swhile) {
+void Skeleton::visitSWhile(SWhile *swhile) {
     /* Code For SWhile Goes Here */
 
     auto function = builder.GetInsertBlock()->getParent();
@@ -246,18 +217,15 @@ llvm::Value *Skeleton::visitSWhile(SWhile *swhile) {
     builder.CreateBr(header);
 
     builder.SetInsertPoint(after);
-
-    return nullptr;
 }
 
-llvm::Value *Skeleton::visitSJmp(SJmp *sjmp) {
+void Skeleton::visitSJmp(SJmp *sjmp) {
     /* Code For SJmp Goes Here */
 
     sjmp->jmp_->accept(this);
-    return nullptr;
 }
 
-llvm::Value *Skeleton::visitSDeclAss(SDeclAss *sdeclass) {
+void Skeleton::visitSDeclAss(SDeclAss *sdeclass) {
     /* Code For SDeclAss Goes Here */
 
     sdeclass->declaration_->accept(this);
@@ -272,46 +240,35 @@ llvm::Value *Skeleton::visitSDeclAss(SDeclAss *sdeclass) {
         value = builder.CreateIntCast(value, var->getType()->getContainedType(0), true);
 
     auto assignment = builder.CreateStore(value, var);
-
-    return assignment; //value_stack.top();
 }
 
-llvm::Value *Skeleton::visitSDecl(SDecl *sdecl) {
+void Skeleton::visitSDecl(SDecl *sdecl) {
     /* Code For SDecl Goes Here */
     sdecl->declaration_->accept(this);
-
-    return value_stack.top();
 }
 
-llvm::Value *Skeleton::visitSExp(SExp *sexp) {
+void Skeleton::visitSExp(SExp *sexp) {
     /* Code For SExp Goes Here */
 
     sexp->exp_->accept(this);
-    llvm::Value *return_val = nullptr;
-    if(value_stack.size() > 0)
-        return_val = value_stack.top();
-    return return_val;
 }
 
-llvm::Value *Skeleton::visitSEmptyComp(SEmptyComp *semptycomp) {
+void Skeleton::visitSEmptyComp(SEmptyComp *semptycomp) {
     /* Code For SEmptyComp Goes Here */
-
-    return nullptr;
+    //No code needed
 }
 
-llvm::Value *Skeleton::visitSEmpty(SEmpty *sempty) {
+void Skeleton::visitSEmpty(SEmpty *sempty) {
     /* Code For SEmpty Goes Here */
-
-    return nullptr;
+    //No code needed
 }
 
-llvm::Value *Skeleton::visitSJmpBreak(SJmpBreak *sjmpbreak) {
+void Skeleton::visitSJmpBreak(SJmpBreak *sjmpbreak) {
     /* Code For SJmpBreak Goes Here */
 
-
 }
 
-llvm::Value *Skeleton::visitSJmpRetExp(SJmpRetExp *sjmpretexp) {
+void Skeleton::visitSJmpRetExp(SJmpRetExp *sjmpretexp) {
     /* Code For SJmpRetExp Goes Here */
 
     sjmpretexp->exp_->accept(this);
@@ -319,16 +276,17 @@ llvm::Value *Skeleton::visitSJmpRetExp(SJmpRetExp *sjmpretexp) {
     value_stack.pop();
 }
 
-llvm::Value *Skeleton::visitSJmpReturn(SJmpReturn *sjmpreturn) {
+void Skeleton::visitSJmpReturn(SJmpReturn *sjmpreturn) {
     /* Code For SJmpReturn Goes Here */
-    //builder.CreateRet(llvm::Constant::getNullValue(llvm::Type::getVoidTy(context)));
     builder.CreateRet(nullptr);
 }
 
-llvm::Value *Skeleton::visitEAssign(EAssign *eassign) {
+void Skeleton::visitEAssign(EAssign *eassign) {
     /* Code For EAssign Goes Here */
 
-    auto var = visitIdent(eassign->ident_);
+    visitIdent(eassign->ident_);
+    auto var = value_stack.top();
+    value_stack.pop();
 
     eassign->exp_->accept(this);
     auto value = value_stack.top();
@@ -336,77 +294,71 @@ llvm::Value *Skeleton::visitEAssign(EAssign *eassign) {
 
     if(value->getType() != var->getType()->getContainedType(0))
         value = builder.CreateIntCast(value, var->getType()->getContainedType(0), true);
-    //value_stack.push();
-    //builder.CreateStore(value, var);
-    return builder.CreateStore(value, var);//value_stack.top();
+
+    builder.CreateStore(value, var);
 }
 
-llvm::Value *Skeleton::visitEMul(EMul *emul) {
+void Skeleton::visitEMul(EMul *emul) {
     /* Code For EMul Goes Here */
 
     emul->exp_1->accept(this);
     emul->exp_2->accept(this);
 
-    llvm::Value *rhs = value_stack.top();
+    auto rhs = value_stack.top();
     value_stack.pop();
-    llvm::Value *lhs = value_stack.top();
+    auto lhs = value_stack.top();
     value_stack.pop();
 
-    llvm::Value *mulvalue = builder.CreateMul(lhs, rhs, "multmp");
+    auto mulvalue = builder.CreateMul(lhs, rhs, "multmp");
     value_stack.push(mulvalue);
-    return value_stack.top();
 }
 
-llvm::Value *Skeleton::visitEDiv(EDiv *ediv) {
+void Skeleton::visitEDiv(EDiv *ediv) {
     /* Code For EDiv Goes Here */
 
     ediv->exp_1->accept(this);
     ediv->exp_2->accept(this);
 
-    llvm::Value *rhs = value_stack.top();
+    auto rhs = value_stack.top();
     value_stack.pop();
-    llvm::Value *lhs = value_stack.top();
+    auto lhs = value_stack.top();
     value_stack.pop();
 
-    llvm::Value *divvalue = builder.CreateSDiv(lhs, rhs, "divtmp");
+    auto divvalue = builder.CreateSDiv(lhs, rhs, "divtmp");
     value_stack.push(divvalue);
-    return value_stack.top();
 }
 
-llvm::Value *Skeleton::visitEMod(EMod *emod) {
+void Skeleton::visitEMod(EMod *emod) {
     /* Code For EMod Goes Here */
 
     emod->exp_1->accept(this);
     emod->exp_2->accept(this);
 
-    llvm::Value *rhs = value_stack.top();
+    auto rhs = value_stack.top();
     value_stack.pop();
-    llvm::Value *lhs = value_stack.top();
+    auto lhs = value_stack.top();
     value_stack.pop();
 
-    llvm::Value *modvalue = builder.CreateSRem(lhs, rhs, "modtmp");
+    auto modvalue = builder.CreateSRem(lhs, rhs, "modtmp");
     value_stack.push(modvalue);
-    return value_stack.top();
 }
 
-
-llvm::Value *Skeleton::visitEAdd(EAdd *eadd) {
+void Skeleton::visitEAdd(EAdd *eadd) {
     /* Code For EAdd Goes Here */
 
     eadd->exp_1->accept(this);
     eadd->exp_2->accept(this);
 
-    llvm::Value *rhs = value_stack.top();
+    auto rhs = value_stack.top();
     value_stack.pop();
-    llvm::Value *lhs = value_stack.top();
+    auto lhs = value_stack.top();
     value_stack.pop();
 
-    llvm::Value *addvalue = builder.CreateAdd(lhs, rhs, "addtmp");
+    auto addvalue = builder.CreateAdd(lhs, rhs, "addtmp");
     value_stack.push(addvalue);
-    return value_stack.top();
 }
 
-llvm::Value *Skeleton::visitESub(ESub *esub) {
+void Skeleton::visitESub(ESub *esub) {
     /* Code For ESub Goes Here */
 
     esub->exp_1->accept(this);
@@ -419,10 +371,9 @@ llvm::Value *Skeleton::visitESub(ESub *esub) {
 
     llvm::Value *subvalue = builder.CreateSub(lhs, rhs, "subtmp");
     value_stack.push(subvalue);
-    return value_stack.top();
 }
 
-llvm::Value *Skeleton::visitEFuncParam(EFuncParam *efuncparam) {
+void Skeleton::visitEFuncParam(EFuncParam *efuncparam) {
     /* Code For EFuncParam Goes Here */
 
     //visitIdent(efuncparam->ident_);
@@ -430,10 +381,10 @@ llvm::Value *Skeleton::visitEFuncParam(EFuncParam *efuncparam) {
 
     auto callee_func = module->getFunction(efuncparam->ident_);
     if (!callee_func)
-        return nullptr;
+        return;
 
     if (callee_func->arg_size() != efuncparam->listident_->size())
-        return nullptr;
+        return;
 
     std::vector<llvm::Value *> value;
     for (auto &arg : callee_func->args()) {
@@ -450,121 +401,121 @@ llvm::Value *Skeleton::visitEFuncParam(EFuncParam *efuncparam) {
     if(callee_func->getReturnType() == builder.getVoidTy())
         value_stack.push(builder.CreateCall(callee_func, value));
     else value_stack.push(builder.CreateCall(callee_func, value, "callfunc"));
-
-    return value_stack.top();
 }
 
-llvm::Value *Skeleton::visitEFunc(EFunc *efunc) {
+void Skeleton::visitEFunc(EFunc *efunc) {
     /* Code For EFunc Goes Here */
     //visitIdent(efunc->ident_);
     auto callee_func = module->getFunction(efunc->ident_);
     if (!callee_func)
-        return nullptr;
+        return;
 
     if (callee_func->arg_size() != 0)
-        return nullptr;
+        return;
 
     value_stack.push(builder.CreateCall(callee_func, llvm::None, "callfunc"));
-    return value_stack.top();
 }
 
-llvm::Value *Skeleton::visitEVar(EVar *evar) {
+void Skeleton::visitEVar(EVar *evar) {
     /* Code For EVar Goes Here */
-    //No code needed
-    llvm::Value *var = visitIdent(evar->ident_);
+    visitIdent(evar->ident_);
+
+    llvm::Value *var = value_stack.top();
+    value_stack.pop();
+
     auto load = builder.CreateLoad(var);
     value_stack.push(load);
-    return load;
+    //return load;
     //value_stack.push(var);
     //return var;
 }
 
-llvm::Value *Skeleton::visitEInteger(EInteger *einteger) {
+void Skeleton::visitEInteger(EInteger *einteger) {
     /* Code For EInteger Goes Here */
     visitInteger(einteger->integer_);
-    value_stack.push(llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), einteger->integer_));
-    return value_stack.top();
+    value_stack.push(builder.getInt64(einteger->integer_));
+    //return value_stack.top();
 }
 
-llvm::Value *Skeleton::visitEChar(EChar *echar) {
+void Skeleton::visitEChar(EChar *echar) {
     /* Code For EChar Goes Here */
     visitChar(echar->char_);
-    value_stack.push(llvm::ConstantInt::get(llvm::Type::getInt8Ty(context), echar->char_));
-    return value_stack.top();
+    value_stack.push(builder.getInt8(echar->char_));
+    //return value_stack.top();
 }
 
-llvm::Type *Skeleton::visitTvoid(Tvoid *tvoid) {
+void Skeleton::visitTvoid(Tvoid *tvoid) {
     /* Code For Tvoid Goes Here */
-    type_stack.push(llvm::Type::getVoidTy(context));
-    return type_stack.top();
+    type_stack.push(builder.getVoidTy());
+    //return type_stack.top();
 }
 
-llvm::Type *Skeleton::visitTchar(Tchar *tchar) {
+void Skeleton::visitTchar(Tchar *tchar) {
     /* Code For Tchar Goes Here */
-    type_stack.push(llvm::Type::getInt8Ty(context));
-    return type_stack.top();
+    type_stack.push(builder.getInt8Ty());
+    //return type_stack.top();
 }
 
-llvm::Type *Skeleton::visitTint(Tint *tint) {
+void Skeleton::visitTint(Tint *tint) {
     /* Code For Tint Goes Here */
 
-    type_stack.push(llvm::Type::getInt64Ty(context));
-    return type_stack.top();
+    type_stack.push(builder.getInt64Ty());
+    //return type_stack.top();
 }
 
 
-llvm::Value *Skeleton::visitListFunction(ListFunction *listfunction) {
-    for (ListFunction::iterator i = listfunction->begin(); i != listfunction->end(); ++i) {
-        (*i)->accept(this);
+void Skeleton::visitListFunction(ListFunction *listfunction) {
+    for (auto & i : *listfunction) {
+        i->accept(this);
     }
 }
 
-llvm::Value *Skeleton::visitListDeclaration(ListDeclaration *listdeclaration) {
-    for (ListDeclaration::iterator i = listdeclaration->begin(); i != listdeclaration->end(); ++i) {
-        (*i)->accept(this);
+void Skeleton::visitListDeclaration(ListDeclaration *listdeclaration) {
+    for (auto & i : *listdeclaration) {
+        i->accept(this);
     }
 }
 
-llvm::Value *Skeleton::visitListStmt(ListStmt *liststmt) {
-    for (ListStmt::iterator i = liststmt->begin(); i != liststmt->end(); ++i) {
-        (*i)->accept(this);
+void Skeleton::visitListStmt(ListStmt *liststmt) {
+    for (auto & i : *liststmt) {
+        i->accept(this);
     }
 }
 
-llvm::Value *Skeleton::visitListIdent(ListIdent *listident) {
-    for (ListIdent::iterator i = listident->begin(); i != listident->end(); ++i) {
-        value_stack.push(visitIdent(*i));
+void Skeleton::visitListIdent(ListIdent *listident) {
+    for (auto & i : *listident) {
+        visitIdent(i);
     }
 }
 
 
-llvm::Value *Skeleton::visitInteger(Integer x) {
+void Skeleton::visitInteger(Integer x) {
     /* Code for Integer Goes Here */
     //No code needed
-    return nullptr;
+    //return nullptr;
 }
 
-llvm::Value *Skeleton::visitChar(Char x) {
+void Skeleton::visitChar(Char x) {
     /* Code for Char Goes Here */
     //No code needed
-    return nullptr;
+    //return nullptr;
 }
 
-llvm::Value *Skeleton::visitDouble(Double x) {
+void Skeleton::visitDouble(Double x) {
     /* Code for Double Goes Here */
     //No code needed
-    return nullptr;
+    //return nullptr;
 }
 
-llvm::Value *Skeleton::visitString(String x) {
+void Skeleton::visitString(String x) {
     /* Code for String Goes Here */
     //No code needed
-    return nullptr;
+    //return nullptr;
 }
 
-llvm::Value *Skeleton::visitIdent(Ident x) {
+void Skeleton::visitIdent(Ident x) {
     /* Code for Ident Goes Here */
-    return named_values.at(x);
+    value_stack.push(named_values.at(x));
 }
 
 
@@ -615,16 +566,13 @@ void Skeleton::Compile(const std::string& output_file, Program *top_node) {
         abort();
     }
 
-
     top_node->accept(this); // the magic
-
 
     pass.run(*module);
     dest.flush();
 
     module->print(llvm::errs(), nullptr);
     outs() << "Wrote " << output_file << "\n";
-
 }
 
 Skeleton::Skeleton() : builder(context){

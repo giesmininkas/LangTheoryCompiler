@@ -29,53 +29,53 @@ void render(char* s);
   ~PrintAbsyn(void);
   char* print(Visitable* v);
 
-  llvm::Value *visitProgram(Program *p); /* abstract class */
-  llvm::Value *visitProgr(Progr *p);
-  llvm::Value *visitFunction(Function *p); /* abstract class */
-  llvm::Value *visitFunc(Func *p);
-  llvm::Value *visitListFunction(ListFunction* p);
-  llvm::Value *visitDeclaration(Declaration *p); /* abstract class */
-  llvm::Value *visitDecl(Decl *p);
-  llvm::Value *visitListDeclaration(ListDeclaration* p);
-  llvm::Value *visitStmt(Stmt *p); /* abstract class */
-  llvm::Value *visitSComp(SComp *p);
-  llvm::Value *visitSIfElse(SIfElse *p);
-  llvm::Value *visitSIf(SIf *p);
-  llvm::Value *visitSWhile(SWhile *p);
-  llvm::Value *visitSJmp(SJmp *p);
-  llvm::Value *visitSDeclAss(SDeclAss *p);
-  llvm::Value *visitSDecl(SDecl *p);
-  llvm::Value *visitSExp(SExp *p);
-  llvm::Value *visitSEmptyComp(SEmptyComp *p);
-  llvm::Value *visitSEmpty(SEmpty *p);
-  llvm::Value *visitListStmt(ListStmt* p);
-  llvm::Value *visitJmp(Jmp *p); /* abstract class */
-  llvm::Value *visitSJmpBreak(SJmpBreak *p);
-  llvm::Value *visitSJmpRetExp(SJmpRetExp *p);
-  llvm::Value *visitSJmpReturn(SJmpReturn *p);
-  llvm::Value *visitExp(Exp *p); /* abstract class */
-  llvm::Value *visitEAssign(EAssign *p);
-  llvm::Value *visitEMul(EMul *p);
-  llvm::Value *visitEDiv(EDiv *p);
-  llvm::Value *visitEMod(EMod *p);
-  llvm::Value *visitEAdd(EAdd *p);
-  llvm::Value *visitESub(ESub *p);
-  llvm::Value *visitEFuncParam(EFuncParam *p);
-  llvm::Value *visitEFunc(EFunc *p);
-  llvm::Value *visitEVar(EVar *p);
-  llvm::Value *visitEInteger(EInteger *p);
-  llvm::Value *visitEChar(EChar *p);
-  llvm::Value *visitType(Type *p); /* abstract class */
-  llvm::Type  *visitTvoid(Tvoid *p);
-  llvm::Type  *visitTchar(Tchar *p);
-  llvm::Type  *visitTint(Tint *p);
-  llvm::Value *visitListIdent(ListIdent* p);
+  void visitProgram(Program *p); /* abstract class */
+  void visitProgr(Progr *p);
+  void visitFunction(Function *p); /* abstract class */
+  void visitFunc(Func *p);
+  void visitListFunction(ListFunction *p);
+  void visitDeclaration(Declaration *p); /* abstract class */
+  void visitDecl(Decl *p);
+  void visitListDeclaration(ListDeclaration *p);
+  void visitStmt(Stmt *p); /* abstract class */
+  void visitSComp(SComp *p);
+  void visitSIfElse(SIfElse *p);
+  void visitSIf(SIf *p);
+  void visitSWhile(SWhile *p);
+  void visitSJmp(SJmp *p);
+  void visitSDeclAss(SDeclAss *p);
+  void visitSDecl(SDecl *p);
+  void visitSExp(SExp *p);
+  void visitSEmptyComp(SEmptyComp *p);
+  void visitSEmpty(SEmpty *p);
+  void visitListStmt(ListStmt *p);
+  void visitJmp(Jmp *p); /* abstract class */
+  void visitSJmpBreak(SJmpBreak *p);
+  void visitSJmpRetExp(SJmpRetExp *p);
+  void visitSJmpReturn(SJmpReturn *p);
+  void visitExp(Exp *p); /* abstract class */
+  void visitEAssign(EAssign *p);
+  void visitEMul(EMul *p);
+  void visitEDiv(EDiv *p);
+  void visitEMod(EMod *p);
+  void visitEAdd(EAdd *p);
+  void visitESub(ESub *p);
+  void visitEFuncParam(EFuncParam *p);
+  void visitEFunc(EFunc *p);
+  void visitEVar(EVar *p);
+  void visitEInteger(EInteger *p);
+  void visitEChar(EChar *p);
+  void visitType(Type *p); /* abstract class */
+  void visitTvoid(Tvoid *p);
+  void visitTchar(Tchar *p);
+  void visitTint(Tint *p);
+  void visitListIdent(ListIdent *p);
 
-  llvm::Value *visitInteger(Integer i);
-  llvm::Value *visitDouble(Double d);
-  llvm::Value *visitChar(Char c);
-  llvm::Value *visitString(String s);
-  llvm::Value *visitIdent(String s);
+  void visitInteger(Integer i);
+  void visitDouble(Double d);
+  void visitChar(Char c);
+  void visitString(String s);
+  void visitIdent(String s);
  protected:
   void inline bufAppend(const char* s)
   {
@@ -143,53 +143,53 @@ class ShowAbsyn : public Visitor
   ~ShowAbsyn(void);
   char* show(Visitable* v);
 
-  llvm::Value *visitProgram(Program *p); /* abstract class */
-  llvm::Value *visitProgr(Progr *p);
-  llvm::Value *visitFunction(Function *p); /* abstract class */
-  llvm::Value *visitFunc(Func *p);
-  llvm::Value *visitListFunction(ListFunction* p);
-  llvm::Value *visitDeclaration(Declaration *p); /* abstract class */
-  llvm::Value *visitDecl(Decl *p);
-  llvm::Value *visitListDeclaration(ListDeclaration* p);
-  llvm::Value *visitStmt(Stmt *p); /* abstract class */
-  llvm::Value *visitSComp(SComp *p);
-  llvm::Value *visitSIfElse(SIfElse *p);
-  llvm::Value *visitSIf(SIf *p);
-  llvm::Value *visitSWhile(SWhile *p);
-  llvm::Value *visitSJmp(SJmp *p);
-  llvm::Value *visitSDeclAss(SDeclAss *p);
-  llvm::Value *visitSDecl(SDecl *p);
-  llvm::Value *visitSExp(SExp *p);
-  llvm::Value *visitSEmptyComp(SEmptyComp *p);
-  llvm::Value *visitSEmpty(SEmpty *p);
-  llvm::Value *visitListStmt(ListStmt* p);
-  llvm::Value *visitJmp(Jmp *p); /* abstract class */
-  llvm::Value *visitSJmpBreak(SJmpBreak *p);
-  llvm::Value *visitSJmpRetExp(SJmpRetExp *p);
-  llvm::Value *visitSJmpReturn(SJmpReturn *p);
-  llvm::Value *visitExp(Exp *p); /* abstract class */
-  llvm::Value *visitEAssign(EAssign *p);
-  llvm::Value *visitEMul(EMul *p);
-  llvm::Value *visitEDiv(EDiv *p);
-  llvm::Value *visitEMod(EMod *p);
-  llvm::Value *visitEAdd(EAdd *p);
-  llvm::Value *visitESub(ESub *p);
-  llvm::Value *visitEFuncParam(EFuncParam *p);
-  llvm::Value *visitEFunc(EFunc *p);
-  llvm::Value *visitEVar(EVar *p);
-  llvm::Value *visitEInteger(EInteger *p);
-  llvm::Value *visitEChar(EChar *p);
-  llvm::Value *visitType(Type *p); /* abstract class */
-  llvm::Type *visitTvoid(Tvoid *p);
-  llvm::Type *visitTchar(Tchar *p);
-  llvm::Type *visitTint(Tint *p);
-  llvm::Value *visitListIdent(ListIdent* p);
+  void visitProgram(Program *p); /* abstract class */
+  void visitProgr(Progr *p);
+  void visitFunction(Function *p); /* abstract class */
+  void visitFunc(Func *p);
+  void visitListFunction(ListFunction *p);
+  void visitDeclaration(Declaration *p); /* abstract class */
+  void visitDecl(Decl *p);
+  void visitListDeclaration(ListDeclaration *p);
+  void visitStmt(Stmt *p); /* abstract class */
+  void visitSComp(SComp *p);
+  void visitSIfElse(SIfElse *p);
+  void visitSIf(SIf *p);
+  void visitSWhile(SWhile *p);
+  void visitSJmp(SJmp *p);
+  void visitSDeclAss(SDeclAss *p);
+  void visitSDecl(SDecl *p);
+  void visitSExp(SExp *p);
+  void visitSEmptyComp(SEmptyComp *p);
+  void visitSEmpty(SEmpty *p);
+  void visitListStmt(ListStmt *p);
+  void visitJmp(Jmp *p); /* abstract class */
+  void visitSJmpBreak(SJmpBreak *p);
+  void visitSJmpRetExp(SJmpRetExp *p);
+  void visitSJmpReturn(SJmpReturn *p);
+  void visitExp(Exp *p); /* abstract class */
+  void visitEAssign(EAssign *p);
+  void visitEMul(EMul *p);
+  void visitEDiv(EDiv *p);
+  void visitEMod(EMod *p);
+  void visitEAdd(EAdd *p);
+  void visitESub(ESub *p);
+  void visitEFuncParam(EFuncParam *p);
+  void visitEFunc(EFunc *p);
+  void visitEVar(EVar *p);
+  void visitEInteger(EInteger *p);
+  void visitEChar(EChar *p);
+  void visitType(Type *p); /* abstract class */
+  void visitTvoid(Tvoid *p);
+  void visitTchar(Tchar *p);
+  void visitTint(Tint *p);
+  void visitListIdent(ListIdent *p);
 
-  llvm::Value *visitInteger(Integer i);
-  llvm::Value *visitDouble(Double d);
-  llvm::Value *visitChar(Char c);
-  llvm::Value *visitString(String s);
-  llvm::Value *visitIdent(String s);
+  void visitInteger(Integer i);
+  void visitDouble(Double d);
+  void visitChar(Char c);
+  void visitString(String s);
+  void visitIdent(String s);
  protected:
   void inline bufAppend(const char* s)
   {

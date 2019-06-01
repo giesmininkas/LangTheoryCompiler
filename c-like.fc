@@ -30,6 +30,7 @@ SJmpReturn. Jmp  ::= "return" ";" ;
 EAssign.    Exp  ::= Ident "=" Exp1 ;
 EMul.       Exp1 ::= Exp1 "*" Exp2 ;
 EDiv.       Exp1 ::= Exp1 "/" Exp2 ;
+EMod.       Exp1 ::= Exp1 "%" Exp2 ;
 EAdd.       Exp2 ::= Exp2 "+" Exp3 ;
 ESub.       Exp2 ::= Exp2 "-" Exp3 ;
 EFuncParam. Exp2 ::= Ident "(" [Ident] ")" ;
