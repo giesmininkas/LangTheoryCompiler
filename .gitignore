@@ -6,3 +6,4 @@ cmake-build-debug
 c-like/c-like.l
 c-like/c-like.tab.c
 c-like/c-like.y
+Makefile

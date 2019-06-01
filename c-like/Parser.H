@@ -15,7 +15,6 @@ class ListStmt;
 class Jmp;
 class Exp;
 class Type;
-class ListIdent;
 
 typedef union
 {
@@ -33,7 +32,6 @@ typedef union
   Jmp* jmp_;
   Exp* exp_;
   Type* type_;
-  ListIdent* listident_;
 } YYSTYPE;
 
 Program* pProgram(FILE *inp);

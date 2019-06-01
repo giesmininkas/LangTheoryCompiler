@@ -33,14 +33,14 @@ void render(char* s);
   void visitProgr(Progr *p);
   void visitFunction(Function *p); /* abstract class */
   void visitFunc(Func *p);
-  void visitListFunction(ListFunction *p);
+  void visitListFunction(ListFunction* p);
   void visitDeclaration(Declaration *p); /* abstract class */
   void visitDecl(Decl *p);
-  void visitListDeclaration(ListDeclaration *p);
+  void visitListDeclaration(ListDeclaration* p);
   void visitStmt(Stmt *p); /* abstract class */
   void visitSComp(SComp *p);
-  void visitSIfElse(SIfElse *p);
   void visitSIf(SIf *p);
+  void visitSIfElse(SIfElse *p);
   void visitSWhile(SWhile *p);
   void visitSJmp(SJmp *p);
   void visitSDeclAss(SDeclAss *p);
@@ -48,28 +48,27 @@ void render(char* s);
   void visitSExp(SExp *p);
   void visitSEmptyComp(SEmptyComp *p);
   void visitSEmpty(SEmpty *p);
-  void visitListStmt(ListStmt *p);
+  void visitListStmt(ListStmt* p);
   void visitJmp(Jmp *p); /* abstract class */
   void visitSJmpBreak(SJmpBreak *p);
   void visitSJmpRetExp(SJmpRetExp *p);
   void visitSJmpReturn(SJmpReturn *p);
   void visitExp(Exp *p); /* abstract class */
   void visitEAssign(EAssign *p);
-  void visitEMul(EMul *p);
-  void visitEDiv(EDiv *p);
-  void visitEMod(EMod *p);
   void visitEAdd(EAdd *p);
   void visitESub(ESub *p);
+  void visitEMod(EMod *p);
+  void visitEMul(EMul *p);
+  void visitEDiv(EDiv *p);
   void visitEFuncParam(EFuncParam *p);
-  void visitEFunc(EFunc *p);
   void visitEVar(EVar *p);
   void visitEInteger(EInteger *p);
   void visitEChar(EChar *p);
+  void visitListExp(ListExp* p);
   void visitType(Type *p); /* abstract class */
   void visitTvoid(Tvoid *p);
   void visitTchar(Tchar *p);
   void visitTint(Tint *p);
-  void visitListIdent(ListIdent *p);
 
   void visitInteger(Integer i);
   void visitDouble(Double d);
@@ -147,14 +146,14 @@ class ShowAbsyn : public Visitor
   void visitProgr(Progr *p);
   void visitFunction(Function *p); /* abstract class */
   void visitFunc(Func *p);
-  void visitListFunction(ListFunction *p);
+  void visitListFunction(ListFunction* p);
   void visitDeclaration(Declaration *p); /* abstract class */
   void visitDecl(Decl *p);
-  void visitListDeclaration(ListDeclaration *p);
+  void visitListDeclaration(ListDeclaration* p);
   void visitStmt(Stmt *p); /* abstract class */
   void visitSComp(SComp *p);
-  void visitSIfElse(SIfElse *p);
   void visitSIf(SIf *p);
+  void visitSIfElse(SIfElse *p);
   void visitSWhile(SWhile *p);
   void visitSJmp(SJmp *p);
   void visitSDeclAss(SDeclAss *p);
@@ -162,28 +161,27 @@ class ShowAbsyn : public Visitor
   void visitSExp(SExp *p);
   void visitSEmptyComp(SEmptyComp *p);
   void visitSEmpty(SEmpty *p);
-  void visitListStmt(ListStmt *p);
+  void visitListStmt(ListStmt* p);
   void visitJmp(Jmp *p); /* abstract class */
   void visitSJmpBreak(SJmpBreak *p);
   void visitSJmpRetExp(SJmpRetExp *p);
   void visitSJmpReturn(SJmpReturn *p);
   void visitExp(Exp *p); /* abstract class */
   void visitEAssign(EAssign *p);
-  void visitEMul(EMul *p);
-  void visitEDiv(EDiv *p);
-  void visitEMod(EMod *p);
   void visitEAdd(EAdd *p);
   void visitESub(ESub *p);
+  void visitEMod(EMod *p);
+  void visitEMul(EMul *p);
+  void visitEDiv(EDiv *p);
   void visitEFuncParam(EFuncParam *p);
-  void visitEFunc(EFunc *p);
   void visitEVar(EVar *p);
   void visitEInteger(EInteger *p);
   void visitEChar(EChar *p);
+  void visitListExp(ListExp* p);
   void visitType(Type *p); /* abstract class */
   void visitTvoid(Tvoid *p);
   void visitTchar(Tchar *p);
   void visitTint(Tint *p);
-  void visitListIdent(ListIdent *p);
 
   void visitInteger(Integer i);
   void visitDouble(Double d);
