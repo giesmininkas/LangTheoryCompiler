@@ -49,13 +49,64 @@ Progr *Progr::clone() const
 
 
 
-/********************   Func    ********************/
-Func::Func(Type *p1, Ident p2, ListDeclaration *p3, Stmt *p4)
+/********************   FuncProto    ********************/
+FuncProto::FuncProto(Type *p1, Ident p2, ListDeclaration *p3)
 {
   type_ = p1;
   ident_ = p2;
   listdeclaration_ = p3;
-  stmt_ = p4;
+
+}
+
+FuncProto::FuncProto(const FuncProto & other)
+{
+  type_ = other.type_->clone();
+  ident_ = other.ident_;
+  listdeclaration_ = other.listdeclaration_->clone();
+
+}
+
+FuncProto &FuncProto::operator=(const FuncProto & other)
+{
+  FuncProto tmp(other);
+  swap(tmp);
+  return *this;
+}
+
+void FuncProto::swap(FuncProto & other)
+{
+  std::swap(type_, other.type_);
+  std::swap(ident_, other.ident_);
+  std::swap(listdeclaration_, other.listdeclaration_);
+
+}
+
+FuncProto::~FuncProto()
+{
+  delete(type_);
+  delete(listdeclaration_);
+
+}
+
+void FuncProto::accept(Visitor *v)
+{
+  v->visitFuncProto(this);
+}
+
+FuncProto *FuncProto::clone() const
+{
+  return new FuncProto(*this);
+}
+
+
+
+/********************   Func    ********************/
+Func::Func(Type *p1, Ident p2, ListDeclaration *p3, ListStmt *p4)
+{
+  type_ = p1;
+  ident_ = p2;
+  listdeclaration_ = p3;
+  liststmt_ = p4;
 
 }
 
@@ -64,7 +115,7 @@ Func::Func(const Func & other)
   type_ = other.type_->clone();
   ident_ = other.ident_;
   listdeclaration_ = other.listdeclaration_->clone();
-  stmt_ = other.stmt_->clone();
+  liststmt_ = other.liststmt_->clone();
 
 }
 
@@ -80,7 +131,7 @@ void Func::swap(Func & other)
   std::swap(type_, other.type_);
   std::swap(ident_, other.ident_);
   std::swap(listdeclaration_, other.listdeclaration_);
-  std::swap(stmt_, other.stmt_);
+  std::swap(liststmt_, other.liststmt_);
 
 }
 
@@ -88,7 +139,7 @@ Func::~Func()
 {
   delete(type_);
   delete(listdeclaration_);
-  delete(stmt_);
+  delete(liststmt_);
 
 }
 

@@ -123,6 +123,22 @@ void PrintAbsyn::visitProgr(Progr* p)
 
 void PrintAbsyn::visitFunction(Function*p) {} //abstract class
 
+void PrintAbsyn::visitFuncProto(FuncProto* p)
+{
+  int oldi = _i_;
+  if (oldi > 0) render(_L_PAREN);
+
+  _i_ = 0; p->type_->accept(this);
+  visitIdent(p->ident_);
+  render('(');
+  if(p->listdeclaration_) {_i_ = 0; p->listdeclaration_->accept(this);}  render(')');
+  render(';');
+
+  if (oldi > 0) render(_R_PAREN);
+
+  _i_ = oldi;
+}
+
 void PrintAbsyn::visitFunc(Func* p)
 {
   int oldi = _i_;
@@ -132,7 +148,8 @@ void PrintAbsyn::visitFunc(Func* p)
   visitIdent(p->ident_);
   render('(');
   if(p->listdeclaration_) {_i_ = 0; p->listdeclaration_->accept(this);}  render(')');
-  _i_ = 0; p->stmt_->accept(this);
+  render('{');
+  if(p->liststmt_) {_i_ = 0; p->liststmt_->accept(this);}  render('}');
 
   if (oldi > 0) render(_R_PAREN);
 
@@ -600,6 +617,23 @@ void ShowAbsyn::visitProgr(Progr* p)
 }
 void ShowAbsyn::visitFunction(Function* p) {} //abstract class
 
+void ShowAbsyn::visitFuncProto(FuncProto* p)
+{
+  bufAppend('(');
+  bufAppend("FuncProto");
+  bufAppend(' ');
+  bufAppend('[');
+  if (p->type_)  p->type_->accept(this);
+  bufAppend(']');
+  bufAppend(' ');
+  visitIdent(p->ident_);
+  bufAppend(' ');
+  bufAppend('[');
+  if (p->listdeclaration_)  p->listdeclaration_->accept(this);
+  bufAppend(']');
+  bufAppend(' ');
+  bufAppend(')');
+}
 void ShowAbsyn::visitFunc(Func* p)
 {
   bufAppend('(');
@@ -616,8 +650,9 @@ void ShowAbsyn::visitFunc(Func* p)
   bufAppend(']');
   bufAppend(' ');
   bufAppend('[');
-  if (p->stmt_)  p->stmt_->accept(this);
+  if (p->liststmt_)  p->liststmt_->accept(this);
   bufAppend(']');
+  bufAppend(' ');
   bufAppend(')');
 }
 void ShowAbsyn::visitListFunction(ListFunction *listfunction)

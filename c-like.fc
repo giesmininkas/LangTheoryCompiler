@@ -2,7 +2,8 @@ entrypoints Program ;
 
 Progr.      Program ::= [Function] ; 
 
-Func.       Function ::= Type Ident "(" [Declaration] ")" Stmt ;
+FuncProto.  Function ::= Type Ident "(" [Declaration] ")" ";" ;
+Func.       Function ::= Type Ident "(" [Declaration] ")" "{" [Stmt] "}" ;
 terminator  Function "" ;
 
 Decl.       Declaration ::= Type Ident ;
@@ -10,8 +11,8 @@ separator   Declaration "," ;
 
 
 SComp.      Stmt ::= "{" [Stmt] "}" ;
-SIfElse.    Stmt ::= "if" "(" Exp ")" Stmt "else" Stmt ;
 SIf.        Stmt ::= "if" "(" Exp ")" Stmt ;
+SIfElse.    Stmt ::= "if" "(" Exp ")" Stmt "else" Stmt ;
 SWhile.     Stmt ::= "while" "(" Exp ")" Stmt ;
 SJmp.       Stmt ::= Jmp ;
 SDeclAss.   Stmt ::= Declaration "=" Exp ";" ;
@@ -28,16 +29,16 @@ SJmpRetExp. Jmp  ::= "return" Exp ";" ;
 SJmpReturn. Jmp  ::= "return" ";" ;
 
 EAssign.    Exp  ::= Ident "=" Exp1 ;
-EMul.       Exp1 ::= Exp1 "*" Exp2 ;
-EDiv.       Exp1 ::= Exp1 "/" Exp2 ;
-EMod.       Exp1 ::= Exp1 "%" Exp2 ;
-EAdd.       Exp2 ::= Exp2 "+" Exp3 ;
-ESub.       Exp2 ::= Exp2 "-" Exp3 ;
-EFuncParam. Exp2 ::= Ident "(" [Ident] ")" ;
-EFunc.      Exp2 ::= Ident "(" ")" ;
+EAdd.       Exp1 ::= Exp1 "+" Exp2 ;
+ESub.       Exp1 ::= Exp1 "-" Exp2 ;
+EMod.       Exp2 ::= Exp2 "%" Exp3 ;
+EMul.       Exp2 ::= Exp2 "*" Exp3 ;
+EDiv.       Exp2 ::= Exp2 "/" Exp3 ;
+EFuncParam. Exp3 ::= Ident "(" [Exp1] ")" ;
 EVar.       Exp3 ::= Ident ;
 EInteger.   Exp3 ::= Integer ;
 EChar.      Exp3 ::= Char ;
+separator Exp1 "," ;
 
 _.          Exp3  ::= "(" Exp ")" ;
 _.          Exp2 ::= Exp3 ;
@@ -47,8 +48,6 @@ _.          Exp  ::= Exp1 ;
 Tvoid.      Type ::= "void";
 Tchar.      Type ::= "char";
 Tint.       Type ::= "int";
-
-separator Ident "," ;
 
 comment "/*" "*/" ;
 comment "//";

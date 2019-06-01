@@ -43,12 +43,39 @@ void Skeleton::visitType(Type *p) {} //abstract class
 void Skeleton::visitProgr(Progr *p) {
     /* Code For Progr Goes Here */
 
-    std::vector<llvm::Type *> arg_types;
+    /*std::vector<llvm::Type *> arg_types;
     arg_types.push_back(builder.getInt32Ty());
     llvm::FunctionType *putchar = llvm::FunctionType::get(builder.getInt32Ty(), arg_types, false);
-    llvm::Constant *func = module->getOrInsertFunction("putchar", putchar);
+    llvm::Constant *func = module->getOrInsertFunction("putchar", putchar);*/
 
     p->listfunction_->accept(this);
+}
+
+void Skeleton::visitFuncProto(FuncProto *funcproto)
+{
+    /* Code For FuncProto Goes Here */
+
+    funcproto->type_->accept(this);
+    auto ret_type = type_stack.top();
+    type_stack.pop();
+
+    auto func_name = funcproto->ident_;
+
+    std::vector<llvm::Type *> arg_types;
+    for (auto declaration : *funcproto->listdeclaration_) {
+        auto decl = static_cast<Decl *>(declaration);
+        decl->type_->accept(this);
+        arg_types.push_back(type_stack.top());
+        type_stack.pop();
+    }
+
+    auto func_type = llvm::FunctionType::get(ret_type, arg_types, false);
+    auto func = module->getOrInsertFunction(func_name, func_type);
+
+
+    //funcproto->listdeclaration_->accept(this);
+
+
 }
 
 void Skeleton::visitFunc(Func *func) {
@@ -93,7 +120,7 @@ void Skeleton::visitFunc(Func *func) {
         named_values.emplace(arg.getName(), alloca);
     }
 
-    func->stmt_->accept(this);
+    func->liststmt_->accept(this);
 
     if (llvm::verifyFunction(*function, &llvm::errs()))
         function->eraseFromParent();

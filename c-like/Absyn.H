@@ -27,6 +27,7 @@ class Jmp;
 class Exp;
 class Type;
 class Progr;
+class FuncProto;
 class Func;
 class Decl;
 class SComp;
@@ -74,6 +75,7 @@ public:
   virtual void visitExp(Exp *p) = 0;
   virtual void visitType(Type *p) = 0;
   virtual void visitProgr(Progr *p) = 0;
+  virtual void visitFuncProto(FuncProto *p) = 0;
   virtual void visitFunc(Func *p) = 0;
   virtual void visitDecl(Decl *p) = 0;
   virtual void visitSComp(SComp *p) = 0;
@@ -192,17 +194,33 @@ public:
   void swap(Progr &);
 };
 
+class FuncProto : public Function
+{
+public:
+  Type *type_;
+  Ident ident_;
+  ListDeclaration *listdeclaration_;
+
+  FuncProto(const FuncProto &);
+  FuncProto &operator=(const FuncProto &);
+  FuncProto(Type *p1, Ident p2, ListDeclaration *p3);
+  ~FuncProto();
+  virtual void accept(Visitor *v);
+  virtual FuncProto *clone() const;
+  void swap(FuncProto &);
+};
+
 class Func : public Function
 {
 public:
   Type *type_;
   Ident ident_;
   ListDeclaration *listdeclaration_;
-  Stmt *stmt_;
+  ListStmt *liststmt_;
 
   Func(const Func &);
   Func &operator=(const Func &);
-  Func(Type *p1, Ident p2, ListDeclaration *p3, Stmt *p4);
+  Func(Type *p1, Ident p2, ListDeclaration *p3, ListStmt *p4);
   ~Func();
   virtual void accept(Visitor *v);
   virtual Func *clone() const;

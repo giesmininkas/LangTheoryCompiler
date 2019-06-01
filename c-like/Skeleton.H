@@ -36,6 +36,7 @@ public:
     void visitExp(Exp* p);
     void visitType(Type* p);
     void visitProgr(Progr* p);
+    void visitFuncProto(FuncProto* p);
     void visitFunc(Func* p);
     void visitDecl(Decl* p);
     void visitSComp(SComp* p);
@@ -52,11 +53,11 @@ public:
     void visitSJmpRetExp(SJmpRetExp* p);
     void visitSJmpReturn(SJmpReturn* p);
     void visitEAssign(EAssign* p);
-    void visitEMul(EMul* p);
-    void visitEDiv(EDiv* p);
-    void visitEMod(EMod* p);
     void visitEAdd(EAdd* p);
     void visitESub(ESub* p);
+    void visitEMod(EMod* p);
+    void visitEMul(EMul* p);
+    void visitEDiv(EDiv* p);
     void visitEFuncParam(EFuncParam* p);
     void visitEVar(EVar* p);
     void visitEInteger(EInteger* p);
