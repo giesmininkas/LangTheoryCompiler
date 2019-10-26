@@ -1,7 +1,10 @@
-int foo(int f) {
+/*int foo(int f) {
    //int a = 456;
    return 4;
-}
+}*/
+
+int putchar(int n);
+void print_integer(int integer);
 
 int power(int base, int exp) {
     int tmp = base;
@@ -40,10 +43,11 @@ void print_integer(int integer) {
     
     //count = count - 1;
     
-    tmp1 = 10;
-    putchar(tmp1);
+    putchar('\n');
     return;
 }
+
+//int foo();
 
 int main() {
     int n = '0';
@@ -51,16 +55,18 @@ int main() {
     
     int abcd = 123456;
     
+    //putchar('4');//power(2, 3));
+    
     print_integer(abcd);
     
     //putchar(abcd);
     
-    if ( n ) {
+    /*if ( n ) {
         
-    }
+    }*/
   
     while ( n - 90 ) {
-        /*int abcd = 13456;
+        //int abcd = 13456;
         char dfgh = 'a';
         dfgh = 'b';
         
@@ -69,14 +75,17 @@ int main() {
         }
         else {
         
-        } */
+        } 
         
         n = n + 1;
         putchar(n);    
     }
     
-    char c = 10;
-    putchar(c);
-    return foo(abcd);
+    
+    
+    //char c = 10;
+    putchar('0' + 3);
+    putchar('\n');
+    return 4; //foo();
 }
 

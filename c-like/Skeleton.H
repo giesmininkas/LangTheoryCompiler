@@ -9,6 +9,7 @@
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LegacyPassManager.h"
 
 class Skeleton : public Visitor
 {
@@ -19,6 +20,7 @@ private:
     std::unordered_map<std::string, llvm::AllocaInst*> named_values;
     std::stack<llvm::Value*> value_stack;
     std::stack<llvm::Type*> type_stack;
+    llvm::legacy::FunctionPassManager functionPassManager;
 
     std::map<std::string, std::unique_ptr<Function>> FunctionProtos; // issisaugoti funckciju sarasa
 public:

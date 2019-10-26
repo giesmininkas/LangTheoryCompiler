@@ -30,6 +30,11 @@
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
+#include "llvm/Transforms/InstCombine/InstCombine.h"
+#include "llvm/Transforms/Scalar.h"
+#include "llvm/Transforms/Scalar/GVN.h"
+#include "llvm/Transforms/Utils/Mem2Reg.h"
+#include "llvm/Transforms/AggressiveInstCombine/AggressiveInstCombine.h"
 
 
 void Skeleton::visitProgram(Program *p) {} //abstract class
@@ -42,11 +47,6 @@ void Skeleton::visitType(Type *p) {} //abstract class
 
 void Skeleton::visitProgr(Progr *p) {
     /* Code For Progr Goes Here */
-
-    /*std::vector<llvm::Type *> arg_types;
-    arg_types.push_back(builder.getInt32Ty());
-    llvm::FunctionType *putchar = llvm::FunctionType::get(builder.getInt32Ty(), arg_types, false);
-    llvm::Constant *func = module->getOrInsertFunction("putchar", putchar);*/
 
     p->listfunction_->accept(this);
 }
@@ -72,10 +72,6 @@ void Skeleton::visitFuncProto(FuncProto *funcproto)
     auto func_type = llvm::FunctionType::get(ret_type, arg_types, false);
     auto func = module->getOrInsertFunction(func_name, func_type);
 
-
-    //funcproto->listdeclaration_->accept(this);
-
-
 }
 
 void Skeleton::visitFunc(Func *func) {
@@ -88,12 +84,19 @@ void Skeleton::visitFunc(Func *func) {
 
     auto function_name = func->ident_;
 
-    std::vector<llvm::Type *> arg_types;
-    for (auto declaration : *func->listdeclaration_) {
-        auto decl = static_cast<Decl *>(declaration);
-        decl->type_->accept(this);
-        arg_types.push_back(type_stack.top());
-        type_stack.pop();
+    auto function = module->getFunction(function_name);
+
+    if(function == nullptr) {
+        std::vector<llvm::Type *> arg_types;
+        for (auto declaration : *func->listdeclaration_) {
+            auto decl = static_cast<Decl *>(declaration);
+            decl->type_->accept(this);
+            arg_types.push_back(type_stack.top());
+            type_stack.pop();
+        }
+
+        auto function_type = llvm::FunctionType::get(return_type, arg_types, false);
+        function = llvm::Function::Create(function_type, llvm::Function::ExternalLinkage, function_name, module.get());
     }
 
     std::vector<Ident> arg_names;
@@ -101,9 +104,6 @@ void Skeleton::visitFunc(Func *func) {
         auto decl = static_cast<Decl *>(declaration);
         arg_names.push_back(decl->ident_);
     }
-
-    auto function_type = llvm::FunctionType::get(return_type, arg_types, false);
-    auto function = llvm::Function::Create(function_type, llvm::Function::ExternalLinkage, function_name, module.get());
 
     auto i = 0;
     for (auto &arg : function->args()) {
@@ -124,6 +124,8 @@ void Skeleton::visitFunc(Func *func) {
 
     if (llvm::verifyFunction(*function, &llvm::errs()))
         function->eraseFromParent();
+
+    functionPassManager.run(*function);
 }
 
 void Skeleton::visitDecl(Decl *decl) {
@@ -161,15 +163,12 @@ void Skeleton::visitSIfElse(SIfElse *sifelse) {
     auto else_ = llvm::BasicBlock::Create(context, "else");
     auto merge = llvm::BasicBlock::Create(context, "ifcont");
 
-    auto br = builder.CreateCondBr(cond_value, then, else_);
+    builder.CreateCondBr(cond_value, then, else_);
     builder.SetInsertPoint(then);
 
     sifelse->stmt_1->accept(this);
-    llvm::Value *then_value = nullptr;
-    if (!value_stack.empty()) {
-        then_value = value_stack.top();
+    if (!value_stack.empty())
         value_stack.pop();
-    }
 
     builder.CreateBr(merge);
     then = builder.GetInsertBlock();
@@ -177,14 +176,10 @@ void Skeleton::visitSIfElse(SIfElse *sifelse) {
     function->getBasicBlockList().push_back(else_);
     builder.SetInsertPoint(else_);
     sifelse->stmt_2->accept(this);
-    llvm::Value *else_value = nullptr;
-    if (!value_stack.empty()) {
-        else_value = value_stack.top();
+    if (!value_stack.empty())
         value_stack.pop();
-    }
 
     builder.CreateBr(merge);
-    else_ = builder.GetInsertBlock();
 
     function->getBasicBlockList().push_back(merge);
     builder.SetInsertPoint(merge);
@@ -207,14 +202,10 @@ void Skeleton::visitSIf(SIf *sif) {
     builder.SetInsertPoint(then);
 
     sif->stmt_->accept(this);
-    llvm::Value *then_value = nullptr;
-    if (!value_stack.empty()) {
-        then_value = value_stack.top();
+    if (!value_stack.empty())
         value_stack.pop();
-    }
 
     builder.CreateBr(merge);
-    then = builder.GetInsertBlock();
 
     function->getBasicBlockList().push_back(merge);
     builder.SetInsertPoint(merge);
@@ -403,8 +394,6 @@ void Skeleton::visitESub(ESub *esub) {
 
 void Skeleton::visitEFuncParam(EFuncParam *efuncparam) {
     /* Code For EFuncParam Goes Here */
-
-    //visitIdent(efuncparam->ident_);
 
     auto callee_func = module->getFunction(efuncparam->ident_);
     if (!callee_func) {
@@ -608,10 +597,18 @@ void Skeleton::Compile(const std::string &output_file, Program *top_node) {
     outs() << "Wrote " << output_file << "\n";
 }
 
-Skeleton::Skeleton() : builder(context) {
+Skeleton::Skeleton() : builder(context), functionPassManager(module.get()) {
     using namespace llvm;
 
     module = std::make_unique<Module>("code", context);
+    functionPassManager.add(createCFGSimplificationPass()); //no improvement
+    functionPassManager.add(createReassociatePass()); //no improvement
+    functionPassManager.add(createSCCPPass()); //no improvement
+    functionPassManager.add(createGVNPass()); //reduces significantly
+    functionPassManager.add(createAggressiveInstCombinerPass()); //no use
+    functionPassManager.add(createInstructionCombiningPass()); //last one
+    functionPassManager.add(createAggressiveDCEPass()); //no improvement
+    functionPassManager.doInitialization();
 }
 
 llvm::AllocaInst *
